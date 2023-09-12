@@ -20,14 +20,8 @@ public class CharacterVariationSwitcher : MonoBehaviour
 
     public void ShowCharacterVariation()
     {
-        // Disable all characters
-        foreach (var character in characters)
-        {
-            foreach (var go in character.variationGameObjects)
-            {
-                go.SetActive(false);
-            }
-        }
+        // Disable all child game objects of the current game object
+        DisableAllChildGameObjects(transform);
 
         // Enable the selected character and variation
         if (selectedVariationIndex < characters.Length)
@@ -40,7 +34,18 @@ public class CharacterVariationSwitcher : MonoBehaviour
             }
         }
     }
+
+    private void DisableAllChildGameObjects(Transform parent)
+    {
+        // Disable all child game objects of the given parent transform
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            child.gameObject.SetActive(false);
+        }
+    }
 }
+
 
 #if UNITY_EDITOR
 [CustomEditor(typeof(CharacterVariationSwitcher))]
@@ -65,6 +70,9 @@ public class CharacterVariationSwitcherEditor : Editor
         centeredLabelStyle.fontSize = 16;
         EditorGUILayout.LabelField("Character Variation Switcher", centeredLabelStyle, GUILayout.ExpandWidth(true));
 
+        // Validate selectedVariationIndex to ensure it's within a valid range
+        selectedCharacterIndexProp.intValue = Mathf.Clamp(selectedCharacterIndexProp.intValue, 0, charactersProp.arraySize - 1);
+
         EditorGUILayout.PropertyField(selectedCharacterIndexProp);
         if (GUILayout.Button("Show Variation", GUILayout.Height(40f)))
         {
@@ -87,7 +95,8 @@ public class CharacterVariationSwitcherEditor : Editor
         // Add a button to increase the array size
         if (GUILayout.Button("Add Character Variation"))
         {
-            charactersProp.InsertArrayElementAtIndex(charactersProp.arraySize);
+            int newIndex = charactersProp.arraySize;
+            charactersProp.InsertArrayElementAtIndex(newIndex);
         }
 
         // Add a button to decrease the array size
