@@ -1,5 +1,6 @@
 ***** Claude and Unity Setup *****
 ( Documentation Date: 01-Oct-2026 )
+Unity Version 6000.3.25f1
 
 -------------------------------------------------------------------------------------
 Install: Community "MCP for Unity"
